@@ -162,8 +162,8 @@ export const semanticTokens: ColorToken[] = [
     name: 'destructive',
     cssVar: '--destructive',
     utility: 'bg-destructive',
-    lightHex: 'red-600',
-    darkHex: 'red-600',
+    lightHex: 'red-800',
+    darkHex: 'red-800',
   },
   {
     name: 'border',

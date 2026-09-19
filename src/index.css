@@ -76,7 +76,8 @@
   --radius-24: 24px;
   --radius-full: 999px;
   --radius-sm: var(--radius-4);
-  --radius-md: var(--radius-6);
+  /* Figma radius-md = 8px (overrides shadcn default of 6px) */
+  --radius-md: var(--radius-8);
   --radius-lg: var(--radius-8);
   --radius-xl: var(--radius-10);
   --radius-2xl: var(--radius-12);
@@ -130,6 +131,15 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+
+  /* Figma button effects (Buttons frame) */
+  --shadow-button-xs: inset 0 0 0 1px #2226271f;
+  --shadow-focus-ring:
+    0 0 0 2px var(--neutral-0), 0 0 0 4px var(--teal-700), inset 0 0 0 1px #0a0d122e;
+  --shadow-focus-ring-error:
+    0 0 0 2px var(--neutral-0), 0 0 0 4px var(--red-800), inset 0 0 0 1px #0a0d122e;
+  --shadow-focus-ring-dark:
+    0 0 0 2px var(--neutral-800), 0 0 0 4px var(--neutral-100), inset 0 0 0 1px #0a0d122e;
 }
 
 :root {
@@ -164,7 +174,8 @@
   --muted-foreground: var(--neutral-500);
   --accent: var(--neutral-300);
   --accent-foreground: var(--neutral-900);
-  --destructive: var(--red-600);
+  /* Figma Error / Type=Error uses red-800 (not red-600) */
+  --destructive: var(--red-800);
   --border: var(--neutral-400);
   --input: var(--neutral-400);
   --ring: var(--teal-700);
@@ -209,7 +220,7 @@
   --muted-foreground: var(--neutral-100);
   --accent: var(--neutral-500);
   --accent-foreground: var(--neutral-0);
-  --destructive: var(--red-600);
+  --destructive: var(--red-800);
   --border: var(--neutral-400);
   --input: var(--neutral-400);
   --ring: var(--neutral-300);
