@@ -43,6 +43,7 @@ Use the **mapped Tailwind utilities**, not raw `var(--…)` / hex in components:
 
 ## Files to reference before implementing UI
 - `src/index.css` — source of truth for all design tokens.
+- `src/stories/design-system/` — Storybook galleries for colors, typography, spacing, radius (`pnpm storybook`).
 - `components.json` — shadcn aliases, style, and icon library.
 - `src/components/ui/` — canonical shadcn primitives.
 - `.cursor/rules/styling.mdc` — deeper Tailwind / shadcn styling conventions.
