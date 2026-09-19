@@ -1,0 +1,33 @@
+---
+description: Zustand store conventions
+globs: ["**/store.ts", "**/stores/**/*.ts"]
+alwaysApply: false
+---
+
+# Zustand
+
+- Each store lives in its own file: global stores under `src/stores/`, feature-scoped stores in `src/features/<feature>/store.ts`.
+- Don't merge unrelated domains into one large store (e.g. don't let `authStore` also hold `cartStore`'s state).
+- Store shape: separate `state` and `actions` clearly within the same interface; name actions as verbs (`setUser`, `resetFilters`, `toggleSidebar`...).
+- Use the `immer` middleware when state has nested/object structure, to avoid manual, error-prone mutation.
+- Use the `persist` middleware only for state that must survive a reload (e.g. auth token, theme) — don't persist transient UI state (modal open, loading flags...).
+- Selectors: when a component only needs part of the state, always use a selector (`useStore((s) => s.user)`) instead of pulling the whole store object, to avoid unnecessary re-renders.
+- Don't trigger side effects (API calls) directly inside a store action if the project already uses React Query/SWR for server state — Zustand should only hold client/UI state; let the fetching library own server state.
+
+# Reference pattern
+
+```ts
+interface CartState {
+  items: CartItem[];
+  addItem: (item: CartItem) => void;
+  removeItem: (id: string) => void;
+  clear: () => void;
+}
+
+export const useCartStore = create<CartState>()((set) => ({
+  items: [],
+  addItem: (item) => set((state) => ({ items: [...state.items, item] })),
+  removeItem: (id) => set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
+  clear: () => set({ items: [] }),
+}));
+```
