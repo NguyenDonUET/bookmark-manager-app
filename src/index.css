@@ -99,6 +99,17 @@
   --color-red-600: var(--red-600);
   --color-red-800: var(--red-800);
 
+  /* Theme toggle active pill (light=white, dark=darker inset) */
+  --color-theme-toggle-active: var(--theme-toggle-active);
+
+  /* Toast success (Figma: white + teal icon / teal surface + white icon) */
+  --color-toast-success: var(--toast-success-bg);
+  --color-toast-success-border: var(--toast-success-border);
+  --color-toast-success-icon: var(--toast-success-icon);
+  --color-toast-error: var(--toast-error-bg);
+  --color-toast-error-border: var(--toast-error-border);
+  --color-toast-error-icon: var(--toast-error-icon);
+
   /* shadcn semantic → Tailwind color utilities */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -193,6 +204,17 @@
   --sidebar-accent-foreground: var(--neutral-900);
   --sidebar-border: var(--neutral-400);
   --sidebar-ring: var(--teal-700);
+
+  /* Theme toggle — Figma Theme=Light */
+  --theme-toggle-active: var(--neutral-0);
+
+  /* Toast success / error — Figma Theme=Light */
+  --toast-success-bg: var(--neutral-0);
+  --toast-success-border: var(--neutral-400);
+  --toast-success-icon: var(--teal-700);
+  --toast-error-bg: var(--neutral-0);
+  --toast-error-border: var(--neutral-400);
+  --toast-error-icon: var(--red-800);
 }
 
 .dark {
@@ -237,6 +259,17 @@
   --sidebar-accent-foreground: var(--neutral-0);
   --sidebar-border: var(--neutral-400);
   --sidebar-ring: var(--neutral-300);
+
+  /* Theme toggle — Figma Theme=Dark (darker inset on teal track) */
+  --theme-toggle-active: var(--neutral-500);
+
+  /* Toast success / error — Figma Theme=Dark */
+  --toast-success-bg: var(--teal-700);
+  --toast-success-border: var(--teal-700);
+  --toast-success-icon: var(--neutral-0);
+  --toast-error-bg: var(--red-800);
+  --toast-error-border: var(--red-800);
+  --toast-error-icon: var(--neutral-0);
 }
 
 @layer base {
