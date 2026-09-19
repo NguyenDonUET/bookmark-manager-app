@@ -2,12 +2,13 @@ import js from '@eslint/js';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
+import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import prettierConfig from 'eslint-config-prettier';
 
 export default tseslint.config(
-  { ignores: ['dist', 'build', 'node_modules'] },
+  { ignores: ['dist', 'build', 'node_modules', 'storybook-static'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -48,10 +49,11 @@ export default tseslint.config(
     },
   },
   {
-    files: ['vite.config.ts', 'eslint.config.js'],
+    files: ['vite.config.ts', 'eslint.config.js', '.storybook/**/*.{ts,tsx}'],
     languageOptions: {
       globals: globals.node,
     },
   },
   prettierConfig,
+  ...storybook.configs['flat/recommended'],
 );
