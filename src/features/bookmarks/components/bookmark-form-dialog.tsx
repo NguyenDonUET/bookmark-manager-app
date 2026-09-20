@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -13,15 +14,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   DESCRIPTION_MAX_LENGTH,
+  bookmarkFormResolver,
   formatTagsInput,
-  validateBookmarkForm,
 } from '@/features/bookmarks/lib/bookmark-form';
 import { cn } from '@/lib/utils';
 
-import type {
-  BookmarkFormFieldErrors,
-  BookmarkFormValues,
-} from '@/features/bookmarks/lib/bookmark-form';
+import type { BookmarkFormInput, BookmarkFormValues } from '@/features/bookmarks/lib/bookmark-form';
 import type { Bookmark } from '@/features/bookmarks/types';
 
 type BookmarkFormMode = 'add' | 'edit';
@@ -37,12 +35,7 @@ interface BookmarkFormDialogProps {
 
 interface BookmarkFormFieldsProps {
   mode: BookmarkFormMode;
-  initial: {
-    title: string;
-    description: string;
-    url: string;
-    tagsInput: string;
-  };
+  initial: BookmarkFormInput;
   onCancel: () => void;
   onSubmit: (values: BookmarkFormValues) => void;
 }
@@ -82,61 +75,51 @@ function BookmarkFormFields({ mode, initial, onCancel, onSubmit }: BookmarkFormF
   const urlId = React.useId();
   const tagsId = React.useId();
 
-  const [title, setTitle] = React.useState(initial.title);
-  const [description, setDescription] = React.useState(initial.description);
-  const [url, setUrl] = React.useState(initial.url);
-  const [tagsInput, setTagsInput] = React.useState(initial.tagsInput);
-  const [errors, setErrors] = React.useState<BookmarkFormFieldErrors>({});
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<BookmarkFormInput, unknown, BookmarkFormValues>({
+    defaultValues: initial,
+    resolver: bookmarkFormResolver,
+  });
 
-  // Derived during render — do not store in state
+  // useWatch (not watch()) — safer with React Compiler
+  const description = useWatch({ control, name: 'description', defaultValue: initial.description });
   const descriptionLength = description.length;
   const isDescriptionOverLimit = descriptionLength > DESCRIPTION_MAX_LENGTH;
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const result = validateBookmarkForm({ title, description, url, tagsInput });
-    if (!result.ok) {
-      setErrors(result.errors);
-      return;
-    }
-    setErrors({});
-    onSubmit(result.values);
-  };
 
   const submitLabel = mode === 'add' ? 'Add Bookmark' : 'Save Changes';
 
   return (
-    <form className="grid gap-400" onSubmit={handleSubmit} noValidate>
+    <form className="grid gap-400" onSubmit={handleSubmit(onSubmit)} noValidate>
       <div className="grid gap-250">
         <div className="grid gap-100">
           <FieldLabel htmlFor={titleId}>Title</FieldLabel>
           <Input
             id={titleId}
-            name="title"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            aria-invalid={Boolean(errors.title)}
-            aria-describedby={errors.title ? `${titleId}-error` : undefined}
             autoComplete="off"
             className="min-w-0 px-200 py-150"
+            aria-invalid={Boolean(errors.title)}
+            aria-describedby={errors.title ? `${titleId}-error` : undefined}
+            {...register('title')}
           />
-          <FieldError id={`${titleId}-error`} message={errors.title} />
+          <FieldError id={`${titleId}-error`} message={errors.title?.message} />
         </div>
 
         <div className="grid gap-100">
           <FieldLabel htmlFor={descriptionId}>Description</FieldLabel>
           <Textarea
             id={descriptionId}
-            name="description"
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
             maxLength={DESCRIPTION_MAX_LENGTH + 20}
+            className="min-h-1000 min-w-0 px-200 py-150"
             aria-invalid={Boolean(errors.description) || isDescriptionOverLimit}
             aria-describedby={`${descriptionId}-count${errors.description ? ` ${descriptionId}-error` : ''}`}
-            className="min-h-1000 min-w-0 px-200 py-150"
+            {...register('description')}
           />
           <div className="grid grid-cols-[1fr_auto] items-start gap-150">
-            <FieldError id={`${descriptionId}-error`} message={errors.description} />
+            <FieldError id={`${descriptionId}-error`} message={errors.description?.message} />
             <p
               id={`${descriptionId}-count`}
               className={cn(
@@ -155,33 +138,29 @@ function BookmarkFormFields({ mode, initial, onCancel, onSubmit }: BookmarkFormF
           <FieldLabel htmlFor={urlId}>Website URL</FieldLabel>
           <Input
             id={urlId}
-            name="url"
             type="url"
             inputMode="url"
-            value={url}
-            onChange={(event) => setUrl(event.target.value)}
-            aria-invalid={Boolean(errors.url)}
-            aria-describedby={errors.url ? `${urlId}-error` : undefined}
             autoComplete="url"
             className="min-w-0 px-200 py-150"
+            aria-invalid={Boolean(errors.url)}
+            aria-describedby={errors.url ? `${urlId}-error` : undefined}
+            {...register('url')}
           />
-          <FieldError id={`${urlId}-error`} message={errors.url} />
+          <FieldError id={`${urlId}-error`} message={errors.url?.message} />
         </div>
 
         <div className="grid gap-100">
           <FieldLabel htmlFor={tagsId}>Tags</FieldLabel>
           <Input
             id={tagsId}
-            name="tags"
-            value={tagsInput}
-            onChange={(event) => setTagsInput(event.target.value)}
             placeholder="e.g. design, learning, tools"
-            aria-invalid={Boolean(errors.tags)}
-            aria-describedby={errors.tags ? `${tagsId}-error` : undefined}
             autoComplete="off"
             className="min-w-0 px-200 py-150"
+            aria-invalid={Boolean(errors.tagsInput)}
+            aria-describedby={errors.tagsInput ? `${tagsId}-error` : undefined}
+            {...register('tagsInput')}
           />
-          <FieldError id={`${tagsId}-error`} message={errors.tags} />
+          <FieldError id={`${tagsId}-error`} message={errors.tagsInput?.message} />
         </div>
       </div>
 
@@ -218,7 +197,7 @@ export function BookmarkFormDialog({
   const copy = COPY[mode];
   const formKey = mode === 'edit' && bookmark ? `edit-${bookmark.id}` : `add-${String(open)}`;
 
-  const initial = {
+  const initial: BookmarkFormInput = {
     title: bookmark?.title ?? '',
     description: bookmark?.description ?? '',
     url: bookmark?.url ?? '',

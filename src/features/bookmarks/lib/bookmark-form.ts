@@ -1,5 +1,16 @@
+import type { FieldErrors, Resolver } from 'react-hook-form';
+
 const DESCRIPTION_MAX_LENGTH = 280;
 
+/** Raw field values bound to the form controls. */
+export interface BookmarkFormInput {
+  title: string;
+  description: string;
+  url: string;
+  tagsInput: string;
+}
+
+/** Normalized payload after successful validation. */
 export interface BookmarkFormValues {
   title: string;
   description: string;
@@ -39,12 +50,9 @@ export type BookmarkFormFieldErrors = Partial<
   Record<'title' | 'description' | 'url' | 'tags' | 'form', string>
 >;
 
-export function validateBookmarkForm(values: {
-  title: string;
-  description: string;
-  url: string;
-  tagsInput: string;
-}): { ok: true; values: BookmarkFormValues } | { ok: false; errors: BookmarkFormFieldErrors } {
+export function validateBookmarkForm(
+  values: BookmarkFormInput,
+): { ok: true; values: BookmarkFormValues } | { ok: false; errors: BookmarkFormFieldErrors } {
   const errors: BookmarkFormFieldErrors = {};
   const title = values.title.trim();
   const description = values.description.trim();
@@ -84,5 +92,39 @@ export function validateBookmarkForm(values: {
     },
   };
 }
+
+function toFieldErrors(errors: BookmarkFormFieldErrors): FieldErrors<BookmarkFormInput> {
+  const fieldErrors: FieldErrors<BookmarkFormInput> = {};
+  if (errors.title) fieldErrors.title = { type: 'validate', message: errors.title };
+  if (errors.description) {
+    fieldErrors.description = { type: 'validate', message: errors.description };
+  }
+  if (errors.url) fieldErrors.url = { type: 'validate', message: errors.url };
+  // Form field is `tagsInput`; validation key remains `tags` for the domain error shape.
+  if (errors.tags) fieldErrors.tagsInput = { type: 'validate', message: errors.tags };
+  return fieldErrors;
+}
+
+/**
+ * RHF resolver — keeps validation + URL/tag normalization in one place,
+ * and transforms `BookmarkFormInput` → `BookmarkFormValues` on success.
+ */
+export const bookmarkFormResolver: Resolver<
+  BookmarkFormInput,
+  unknown,
+  BookmarkFormValues
+> = async (values) => {
+  const result = validateBookmarkForm(values);
+  if (!result.ok) {
+    return {
+      values: {} as Record<string, never>,
+      errors: toFieldErrors(result.errors),
+    };
+  }
+  return {
+    values: result.values,
+    errors: {} as Record<string, never>,
+  };
+};
 
 export { DESCRIPTION_MAX_LENGTH };
