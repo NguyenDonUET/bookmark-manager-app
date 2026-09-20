@@ -13,6 +13,7 @@ interface BookmarkListProps {
  */
 export function BookmarkList({ onEdit }: BookmarkListProps) {
   const view = useBookmarksStore((s) => s.view);
+  const selectedTags = useBookmarksStore((s) => s.selectedTags);
   const { bookmarks, isStale, hasActiveSearch } = useFilteredBookmarks();
   const togglePin = useBookmarksStore((s) => s.togglePin);
   const toggleArchive = useBookmarksStore((s) => s.toggleArchive);
@@ -20,11 +21,12 @@ export function BookmarkList({ onEdit }: BookmarkListProps) {
   const recordVisit = useBookmarksStore((s) => s.recordVisit);
 
   const heading = view === 'home' ? 'All bookmarks' : 'Archived';
+  const hasActiveFilters = hasActiveSearch || selectedTags.length > 0;
 
   return (
     <>
-      <header className="gap-050 flex flex-col">
-        <h1 className="text-preset-1 font-bold">{heading}</h1>
+      <header className="gap-050 mb-300 flex flex-col">
+        <h1 className="text-preset-1 dark:text-neutral-0 font-bold text-neutral-900">{heading}</h1>
         <p className="text-muted-foreground text-preset-4">
           {bookmarks.length} bookmark{bookmarks.length === 1 ? '' : 's'}
         </p>
@@ -32,7 +34,7 @@ export function BookmarkList({ onEdit }: BookmarkListProps) {
 
       {bookmarks.length === 0 ? (
         <p className="text-muted-foreground text-preset-3">
-          {hasActiveSearch ? 'No bookmarks match your search.' : 'No bookmarks in this view.'}
+          {hasActiveFilters ? 'No bookmarks match your filters.' : 'No bookmarks in this view.'}
         </p>
       ) : (
         <ul

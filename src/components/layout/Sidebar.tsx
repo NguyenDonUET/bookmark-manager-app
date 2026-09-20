@@ -1,6 +1,7 @@
 import { IconArchive, IconHomeLine } from '@/components/icons';
 import { Logo } from '@/components/ui/logo';
 import { NavbarItem } from '@/components/ui/navbar-item';
+import { TagFilterList } from '@/features/bookmarks/components/tag-filter-list';
 import { useBookmarksStore } from '@/features/bookmarks/store';
 import { cn } from '@/lib/utils';
 
@@ -13,12 +14,12 @@ export function Sidebar({ className }: SidebarProps) {
   const setView = useBookmarksStore((s) => s.setView);
 
   return (
-    <div className={cn('flex h-full flex-col gap-300 p-200', className)}>
-      <div className="px-050">
+    <div className={cn('flex h-full min-h-0 flex-col gap-300 p-200', className)}>
+      <div className="px-050 shrink-0">
         <Logo />
       </div>
 
-      <nav className="gap-050 flex flex-col" aria-label="Primary">
+      <nav className="gap-050 flex shrink-0 flex-col" aria-label="Primary">
         <NavbarItem
           type="button"
           variant={view === 'home' ? 'active' : 'default'}
@@ -39,12 +40,7 @@ export function Sidebar({ className }: SidebarProps) {
         </NavbarItem>
       </nav>
 
-      <div className="flex flex-1 flex-col gap-150">
-        <p className="text-preset-5 text-muted-foreground px-150 font-medium tracking-wide uppercase">
-          Tags
-        </p>
-        <p className="text-preset-4 text-muted-foreground px-150">Tag filters coming soon.</p>
-      </div>
+      <TagFilterList className="min-h-0 flex-1" />
     </div>
   );
 }

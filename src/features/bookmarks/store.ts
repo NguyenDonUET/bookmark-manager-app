@@ -36,6 +36,23 @@ function createId(): string {
   return `bm-${crypto.randomUUID()}`;
 }
 
+/** Drop filter tags that no longer exist on any bookmark (avoids invisible empty filters). */
+function pruneOrphanedSelectedTags(state: {
+  bookmarks: Bookmark[];
+  selectedTags: string[];
+}): void {
+  if (state.selectedTags.length === 0) return;
+
+  const existing = new Set<string>();
+  for (const bookmark of state.bookmarks) {
+    for (const tag of bookmark.tags) {
+      existing.add(tag);
+    }
+  }
+
+  state.selectedTags = state.selectedTags.filter((tag) => existing.has(tag));
+}
+
 export const useBookmarksStore = create<BookmarksState>()(
   persist(
     immer((set) => ({
@@ -71,11 +88,15 @@ export const useBookmarksStore = create<BookmarksState>()(
           if (patch.favicon !== undefined) {
             bookmark.favicon = normalizeFaviconPath(patch.favicon);
           }
+          if (patch.tags !== undefined) {
+            pruneOrphanedSelectedTags(state);
+          }
         }),
 
       deleteBookmark: (id) =>
         set((state) => {
           state.bookmarks = state.bookmarks.filter((item) => item.id !== id);
+          pruneOrphanedSelectedTags(state);
         }),
 
       togglePin: (id) =>
@@ -131,8 +152,7 @@ export const useBookmarksStore = create<BookmarksState>()(
         bookmarks: state.bookmarks,
         view: state.view,
         sortBy: state.sortBy,
-        selectedTags: state.selectedTags,
-        // searchQuery intentionally omitted — transient typing state
+        // searchQuery + selectedTags omitted — transient filter UI state
       }),
     },
   ),

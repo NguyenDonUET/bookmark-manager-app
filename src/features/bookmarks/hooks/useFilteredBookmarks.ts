@@ -69,12 +69,26 @@ export function useFilteredBookmarks(): FilteredBookmarksResult {
   return { bookmarks: filtered, isStale, hasActiveSearch };
 }
 
-/** Unique tags across all bookmarks (including archived). */
-export function useAllTags(): string[] {
+export interface TagCount {
+  name: string;
+  count: number;
+}
+
+/**
+ * Unique tags with static totals across all bookmarks (including archived).
+ * Counts do not change with view or selected filters.
+ */
+export function useTagInventory(): TagCount[] {
   const bookmarks = useBookmarksStore((s) => s.bookmarks);
-  const tags = new Set<string>();
+  const counts = new Map<string, number>();
+
   for (const bookmark of bookmarks) {
-    for (const tag of bookmark.tags) tags.add(tag);
+    for (const tag of bookmark.tags) {
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
   }
-  return [...tags].sort((a, b) => a.localeCompare(b));
+
+  return [...counts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
