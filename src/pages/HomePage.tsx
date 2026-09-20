@@ -47,9 +47,13 @@ export function HomePage() {
   };
 
   return (
-    <div className="flex flex-col gap-300">
-      <BookmarkToolbar onAdd={() => setDialog({ mode: 'add' })} />
-      <BookmarkList onEdit={(id) => setDialog({ mode: 'edit', bookmarkId: id })} />
+    <div className="flex h-full min-h-0 flex-col gap-300">
+      <div className="shrink-0">
+        <BookmarkToolbar onAdd={() => setDialog({ mode: 'add' })} />
+      </div>
+      <div className="min-h-0 flex-1 [scrollbar-width:none] overflow-y-auto overscroll-contain [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <BookmarkList onEdit={(id) => setDialog({ mode: 'edit', bookmarkId: id })} />
+      </div>
       <BookmarkFormDialog
         open={isDialogOpen}
         onOpenChange={(open) => {
