@@ -27,6 +27,8 @@ const meta = {
     disabled: false,
     placeholder: 'Search by title...',
     value: '',
+    // Required prop — Storybook action also logs via argTypes
+    onValueChange: () => {},
   },
 } satisfies Meta<typeof SearchInput>;
 

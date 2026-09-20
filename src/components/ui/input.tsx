@@ -43,8 +43,11 @@ const inputVariants = cva(
   },
 );
 
+/** Omit native HTML `size` (number) so CVA `size` (`"sm" | "md"`) can own the prop. */
 interface InputProps
-  extends React.ComponentPropsWithoutRef<'input'>, VariantProps<typeof inputVariants> {}
+  extends
+    Omit<React.ComponentPropsWithoutRef<'input'>, 'size'>,
+    VariantProps<typeof inputVariants> {}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type = 'text', size = 'sm', ...props }, ref) => (
@@ -52,7 +55,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       ref={ref}
       type={type}
       data-slot="input"
-      data-size={size}
+      data-size={size ?? undefined}
       className={cn(inputVariants({ size, className }))}
       {...props}
     />
