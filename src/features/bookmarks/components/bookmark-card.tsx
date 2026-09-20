@@ -164,7 +164,7 @@ const BookmarkCard = React.forwardRef<HTMLElement, BookmarkCardProps>(
 
         {/* Body — flex-1 so cards in a grid row share height regardless of content */}
         <div className="border-border flex flex-1 flex-col gap-200 border-t px-250 py-200">
-          <p className="text-preset-4 line-clamp-3 text-neutral-600 dark:text-neutral-100">
+          <p className="text-preset-4-medium line-clamp-3 font-medium text-neutral-800 dark:text-neutral-100">
             {bookmark.description}
           </p>
 
